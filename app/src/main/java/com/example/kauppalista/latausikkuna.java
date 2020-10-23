@@ -27,9 +27,7 @@ public class latausikkuna extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        arrayList = (ArrayList<String>) intent.getSerializableExtra("ITEMS");
-
+        //Ulkonäön määrittelyä
         setContentView(R.layout.latausikkunan_layout);
 
         DisplayMetrics dm = new DisplayMetrics();
@@ -40,31 +38,34 @@ public class latausikkuna extends Activity {
 
         getWindow().setLayout((int) (width*.7),(int)(height*.7));
 
+        //Tiedostojen haku
         setListaus();
     }
 
+    //Paluu etusivulle
     public void mainNakyma(View view) {
 
         Intent intent = new Intent(this, MainActivity.class);
-        //EditText tiedostonNimi = (EditText) findViewById(R.id.tiedostonNimi);
-        //FILE_NAME = tiedostonNimi.getText().toString() +".txt";
         intent.putExtra("NIMI", FILE_NAME);
         startActivity(intent);
     }
 
+    //Tiedostojen haku
     public void setListaus(){
-        File tiedostot = new File(getFilesDir().getPath());
-        File[] tiedostolista = tiedostot.listFiles();
+        File tiedostot = new File(getFilesDir().getPath()); //Hakee tiedostokansion oletustiedoston nimellä.
+        File[] tiedostolista = tiedostot.listFiles(); //Muodostaa tiedostoista taulukon.
         final String[] tiedostojenNimet = new String[tiedostolista.length];
-        for (int i = 0; i < tiedostojenNimet.length; i++) {
+        for (int i = 0; i < tiedostojenNimet.length; i++) { //Tiedostojen läpikäynti
             tiedostojenNimet[i] = tiedostolista[i].getName();
         }
+        //Tästä eteenpäin lisää tiedostot näkyviin ListViewiin
         listaus = (ListView) findViewById(R.id.listaus);
         listaus.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         final ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tiedostojenNimet);
 
         listaus.setAdapter(arrayAdapter);
 
+        //Tällä valitaan haluttu tiedosto ja siirtää tiedosotn nimen EditText-kenttään.
         listaus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

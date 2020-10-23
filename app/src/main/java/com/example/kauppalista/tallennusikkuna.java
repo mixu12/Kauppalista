@@ -23,10 +23,11 @@ public class tallennusikkuna extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //tämä tuo listan tallennettavaksi
+        //tämä vastaanottaa talletettavan listan
         Intent intent = getIntent();
         arrayList = (ArrayList<String>) intent.getSerializableExtra("ITEMS");
 
+        //Tästä eteenpäin on ulkonäön määritelyä
         setContentView(R.layout.tallennusikkunan_layout);
 
         DisplayMetrics dm = new DisplayMetrics();
@@ -37,6 +38,7 @@ public class tallennusikkuna extends Activity {
 
         getWindow().setLayout((int) (width*.5),(int)(height*.4));
 
+        //OK-napin painalluksen ohjaus. Tallentaa muuttujaan FILE_NAME annetun tiedoston nimen ja lisää tiedostopäätteen.
         final Button ok = (Button) findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,21 +50,25 @@ public class tallennusikkuna extends Activity {
         });
     }
 
+    //Etusivulle siirtyminen
     public void mainNakyma(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
+    //Tallentaminen
     public void tallenna() {
         FileOutputStream fos = null;
         try {
-
+            //Tämä määrittää tallennuspaikan
             fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
 
+            //Tallennettavan listan läpikäynti
             for (int i = 0; i < this.arrayList.size(); i++) {
                 fos.write(this.arrayList.get(i).getBytes());
                 fos.write("\n".getBytes());
             }
+            //Ilmotus talletuksesta
             Toast.makeText(this, "Saved to " + getFilesDir() + "/" + FILE_NAME, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             System.out.println("Virhe: " + e.getMessage());

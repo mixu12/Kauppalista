@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
+//listViewiin tulee näkyviin tallennetut ostokset
         listView = (ListView) findViewById(R.id.listview);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setLongClickable(true);
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(arrayAdapter);
 
 
-
+//lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
         Button lisaa = (Button) findViewById(R.id.lisaa);
         lisaa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }else{
                     if(vastaanotettu != null){
+                        //Bluetoothilla siirretyssä listassa on puolipiste sanoja erottavana merkkinä
                         String[] osat = vastaanotettu.get(0).split(";");
                         for(int i = 0; i < osat.length; i++) {
                             arrayList.add(osat[i]);
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Aukaisee tallennettujen listojen valikon
         Button lataa = (Button) findViewById(R.id.lataa);
         lataa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        //Tyhjentää näkyvillä olevan listan kokonaan, mutta ei muokkaa jo tallennettua listaa
         Button tyhjenna = (Button) findViewById(R.id.tyhjenna);
         tyhjenna.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        //Tämä ohjaa jo kerätyksi merkattujen laatikoiden merkkejä, jos jotain poistaa välistä.
+        //Ilman tätä vain listassa oleva teksti poistuu, mutta merkki jää muistiin ja siirtyy väärään paikkaan.
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -119,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Aukaisee tallennus-ikkunan. Intent.putExtra-komennolla siirretään arrayList-lista tallennus-luokkaan.
         final Button tallenna = (Button) findViewById(R.id.tallenna);
             tallenna.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,13 +141,14 @@ public class MainActivity extends AppCompatActivity {
 
         FILE_NAME = (String) intent.getSerializableExtra("NIMI");
 
-        //tämä tuo latauskansion latausikkuna-luokasta
+        //tämä tuo latauskansion latausikkuna-luokasta aina kun avataan pääsivu, jos FILE_NAME:ssa on jokin tiedostonimi.
         if(FILE_NAME != null){
             lataa();
             arrayAdapter.notifyDataSetChanged();
         }
     }
 
+    //Tällä koodilla voi sulkea automaattisesti näppäimistän. Ei tällä hetkellä käytössä
     private void suljeNappaimisto() {
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -177,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
   */
 
+ // Tässä ladataan se tiedosto, joka on talletettuna muuttujaan FILE_NAME
     public void lataa() {
         FileInputStream fis = null;
 
@@ -187,10 +195,12 @@ public class MainActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
             String text;
 
+            //Tämä käy jokaisen rivin läpi ja lisää ne listaan. Rivit pätkitään rivinvaihtojen perusteella.
             while ((text = br.readLine()) != null) {
                 sb.append(text).append("\n");
                 arrayList.add(text);
             }
+            //Alla oleva antaa ilmoituksen siitä, mikä tiedosto on avattu ja mistä mistä kansiosta.
             Toast.makeText(this, "Load from " + getFilesDir() + "/" + FILE_NAME, Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -199,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Siirtyminen bluetooth-ikkunaan.
     public void bluetoothNakyma(View view) {
         Intent intent = new Intent(this, BluetoothinHallinta.class);
         intent.putExtra("ITEMS", arrayList);
