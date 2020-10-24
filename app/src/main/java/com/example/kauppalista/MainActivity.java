@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     public ListView listView;
-    //Kaiki nimikkeet tallentuvat myös listaan arrayList, koska olioita sisältävän listan siirto tallennusikkunaan ja bluetooth-ikkunaan ei vielä toimi.
+    //Kaiki nimikkeet tallentuvat myös listaan arrayList, koska olioita sisältävän listan siirto bluetooth-ikkunaan ei vielä toimi.
     final ArrayList<String> arrayList = new ArrayList<>();
     public ArrayList<String> vastaanotettu = new ArrayList<>();
     public static String FILE_NAME = null;
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
-                        intent.putExtra("nimikkeet", arrayList);
+                        intent.putExtra("nimikkeet", nimikkeet);
                         startActivity(intent);
                     }
                 });

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class tallennusikkuna extends Activity {
-    public ArrayList<String> arrayList;
+    public ArrayList<Nimike> arrayList;
     public static String FILE_NAME = null;
 
     @Override
@@ -25,7 +25,7 @@ public class tallennusikkuna extends Activity {
 
         //tämä vastaanottaa talletettavan listan
         Intent intent = getIntent();
-        arrayList = (ArrayList<String>) intent.getSerializableExtra("ITEMS");
+        arrayList = (ArrayList<Nimike>) intent.getSerializableExtra("nimikkeet");
 
         //Tästä eteenpäin on ulkonäön määritelyä
         setContentView(R.layout.tallennusikkunan_layout);
@@ -65,7 +65,7 @@ public class tallennusikkuna extends Activity {
 
             //Tallennettavan listan läpikäynti
             for (int i = 0; i < this.arrayList.size(); i++) {
-                fos.write(this.arrayList.get(i).getBytes());
+                fos.write(this.arrayList.get(i).getNimi().getBytes());
                 fos.write("\n".getBytes());
             }
             //Ilmotus talletuksesta
