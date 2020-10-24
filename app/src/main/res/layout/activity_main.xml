@@ -10,12 +10,10 @@
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="176dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="172dp"
         android:longClickable="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,26 +22,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="112dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="17dp"
         android:layout_marginBottom="8dp"
         android:text="Lisää"
         app:layout_constraintBottom_toTopOf="@+id/listview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.16"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tekstikentta" />
 
     <EditText
         android:id="@+id/tekstikentta"
         android:layout_width="296dp"
         android:layout_height="46dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="40dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,17 +80,16 @@
 
     <Button
         android:id="@+id/tyhjenna"
-        android:layout_width="161dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="112dp"
+        android:layout_width="155dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="17dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:text="Tyhjennä lista"
         app:layout_constraintBottom_toTopOf="@+id/listview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.216"
+        app:layout_constraintHorizontal_bias="0.229"
         app:layout_constraintStart_toEndOf="@+id/lisaa"
         app:layout_constraintTop_toBottomOf="@+id/tekstikentta"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.529" />
 </androidx.constraintlayout.widget.ConstraintLayout>
