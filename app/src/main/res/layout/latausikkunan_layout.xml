@@ -16,7 +16,7 @@
         android:text="OK" />
 
     <EditText
-        android:id="@+id/tiedostonNimi"
+        android:id="@+id/listanNimi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"

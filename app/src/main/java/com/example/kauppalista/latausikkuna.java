@@ -1,30 +1,35 @@
 package com.example.kauppalista;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class latausikkuna extends Activity {
-    public ArrayList<String> arrayList;
-    public static String FILE_NAME = null;
+    public static String nimikeryhma = null;
+
+    Tietokanta tietokanta;
+
+    final ArrayList<String> ryhmat = new ArrayList<>();
+    ArrayAdapter arrayAdapter;
 
     public ListView listaus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
+
+
         super.onCreate(savedInstanceState);
 
         //Ulkonäön määrittelyä
@@ -38,42 +43,42 @@ public class latausikkuna extends Activity {
 
         getWindow().setLayout((int) (width*.7),(int)(height*.7));
 
-        //Tiedostojen haku
-        setListaus();
+        // Hakee tietokannan, tekee ListView näkymän, jonka nimi on listaus ja vie tiedot tietokannasta sinne
+        tietokanta = new Tietokanta(latausikkuna.this);
+        listaus = (ListView) findViewById(R.id.listaus);
+        paivitaLista();
+
+
+        listaus.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
+
+                Nimike klikattu = (Nimike) parent.getItemAtPosition(i);
+
+                String ryhma = klikattu.getRyhma();
+                EditText tiedostonNimi = (EditText) findViewById(R.id.listanNimi);
+                tiedostonNimi.setText(ryhma);
+            }
+        });
     }
+
 
     //Paluu etusivulle
     public void mainNakyma(View view) {
-
+        EditText tiedostonNimi = (EditText) findViewById(R.id.listanNimi);
+        if(tiedostonNimi.getText().toString().equals("")){
+            nimikeryhma = null;
+        } else {
+            nimikeryhma = tiedostonNimi.getText().toString();
+        }
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("NIMI", FILE_NAME);
+        intent.putExtra("NIMI", nimikeryhma);
         startActivity(intent);
     }
 
-    //Tiedostojen haku
-    public void setListaus(){
-        File tiedostot = new File(getFilesDir().getPath()); //Hakee tiedostokansion oletustiedoston nimellä.
-        File[] tiedostolista = tiedostot.listFiles(); //Muodostaa tiedostoista taulukon.
-        final String[] tiedostojenNimet = new String[tiedostolista.length];
-        for (int i = 0; i < tiedostojenNimet.length; i++) { //Tiedostojen läpikäynti
-            tiedostojenNimet[i] = tiedostolista[i].getName();
-        }
-        //Tästä eteenpäin lisää tiedostot näkyviin ListViewiin
-        listaus = (ListView) findViewById(R.id.listaus);
-        listaus.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        final ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tiedostojenNimet);
-
+    private void paivitaLista() {
+        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, android.R.layout.simple_list_item_1, tietokanta.getRyhmat());
         listaus.setAdapter(arrayAdapter);
+        }
 
-        //Tällä valitaan haluttu tiedosto ja siirtää tiedosotn nimen EditText-kenttään.
-        listaus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                EditText tiedostonNimi = (EditText) findViewById(R.id.tiedostonNimi);
-                FILE_NAME = tiedostojenNimet[i].toString();
-                tiedostonNimi.setText(FILE_NAME);
-            }
-        });
-
-    }
 }
