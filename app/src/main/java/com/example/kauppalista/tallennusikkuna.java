@@ -13,17 +13,12 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 public class tallennusikkuna extends Activity {
-    public ArrayList<Nimike> arrayList;
 
     Tietokanta tietokanta;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //tämä vastaanottaa talletettavan listan
-        Intent intent = getIntent();
-        arrayList = (ArrayList<Nimike>) intent.getSerializableExtra("nimikkeet");
 
         //Tästä eteenpäin on ulkonäön määritelyä
         setContentView(R.layout.tallennusikkunan_layout);
@@ -37,9 +32,10 @@ public class tallennusikkuna extends Activity {
         getWindow().setLayout((int) (width*.5),(int)(height*.4));
 
         tietokanta = new Tietokanta(tallennusikkuna.this);
-
+        
+        //tämä vastaanottaa talletettavan listan
+        Intent intent = getIntent();
         final String nimikeryhma = (String) intent.getSerializableExtra("nimikeryhmä");
-        System.out.println(nimikeryhma);
 
         //OK-napin painalluksen ohjaus. Tallentaa muuttujaan FILE_NAME annetun tiedoston nimen ja lisää tiedostopäätteen.
         final Button ok = (Button) findViewById(R.id.ok);
@@ -47,8 +43,12 @@ public class tallennusikkuna extends Activity {
             @Override
             public void onClick(View view) {
                 EditText tiedostonNimi = (EditText) findViewById(R.id.listanNimi);
-                tietokanta.paivitaRyhma(tiedostonNimi.getText().toString(), nimikeryhma);
-                mainNakyma(view);
+                if (tiedostonNimi.getText().toString().equals("")){
+                    mainNakyma(view);
+                } else {
+                    tietokanta.paivitaRyhma(tiedostonNimi.getText().toString(), nimikeryhma);
+                    mainNakyma(view);
+                }
             }
         });
     }
