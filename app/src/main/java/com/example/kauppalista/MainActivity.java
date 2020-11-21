@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -48,25 +49,30 @@ public class MainActivity extends AppCompatActivity {
 
 //lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
         Button lisaa = (Button) findViewById(R.id.lisaa);
+        final EditText sana = (EditText) findViewById(R.id.tekstikentta);
+
+        // Sanan lisäys enteria painamalla. Palauttaa falsen, koska silloin ei näppäimistö mene piiloon.
+        sana.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                    lisaysNapinPainallus(sana);
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        // Sanan lisäys lisää-nappia painamalla.
         lisaa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Nimike nimike;
-
-                EditText sana = (EditText) findViewById(R.id.tekstikentta);
-                String uusiTuote = sana.getText().toString();
-                try {
-                    lisaa(uusiTuote);
-                    sana.setText(null);
-                } catch (Exception e){
-                    Toast.makeText(MainActivity.this, "Virhe tallennuksessa", Toast.LENGTH_SHORT).show();
-                    nimike = new Nimike(-1, "virhe", false, "tyhjä");
-                }
-
+                lisaysNapinPainallus(sana);
             }
 
         });
+
+
 
                 //Aukaisee tallennettujen listojen valikon
                 Button lataa = (Button) findViewById(R.id.lataa);
@@ -154,16 +160,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-    private void paivitaLista() {
-        if(nimikeryhma != null){
-            //jos haluaa saada checkboxin käyttöön, niin vaihtaa kohdan android.R.layout.simple_list_item_1 muotoon R.layout.rowlayout
-            arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, android.R.layout.simple_list_item_1, tietokanta.ryhmanNimikkeet(nimikeryhma));
-            listView.setAdapter(arrayAdapter);
-        } else {
-            arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, android.R.layout.simple_list_item_1, tietokanta.kaikkiNimikkeet());
-            listView.setAdapter(arrayAdapter);
+        private void paivitaLista() {
+            if(nimikeryhma != null){
+                //jos haluaa saada checkboxin käyttöön, niin vaihtaa kohdan android.R.layout.simple_list_item_1 muotoon R.layout.rowlayout
+                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, android.R.layout.simple_list_item_1, tietokanta.ryhmanNimikkeet(nimikeryhma));
+                listView.setAdapter(arrayAdapter);
+            } else {
+                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, android.R.layout.simple_list_item_1, tietokanta.kaikkiNimikkeet());
+                listView.setAdapter(arrayAdapter);
+            }
         }
-    }
 
     //Tällä koodilla voi sulkea automaattisesti näppäimistän. Ei tällä hetkellä käytössä
             private void suljeNappaimisto() {
@@ -179,6 +185,20 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, BluetoothinHallinta.class);
                 intent.putExtra("ITEMS", arrayList);
                 startActivity(intent);
+            }
+
+            // Valmistelee sanan lisäyksen ennen lopullista lisäämistä tauluun hakemalla lisätyn sanan.
+            public void lisaysNapinPainallus(EditText sana){
+                Nimike nimike;
+
+                String uusiTuote = sana.getText().toString();
+                try {
+                    lisaa(uusiTuote);
+                    sana.setText(null);
+                } catch (Exception e){
+                    Toast.makeText(MainActivity.this, "Virhe tallennuksessa", Toast.LENGTH_SHORT).show();
+                    nimike = new Nimike(-1, "virhe", false, "tyhjä");
+                }
             }
 
             //Nimikkeet lisäävä metodi. Jos tuote on jo listassa, niin sitä ei lisätä. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
