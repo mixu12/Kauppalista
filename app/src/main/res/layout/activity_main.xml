@@ -18,12 +18,12 @@
         app:layout_constraintTop_toBottomOf="@+id/tyhjenna" />
 
     <Button
-        android:id="@+id/lisaa"
+        android:id="@+id/leikepoyta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
-        android:text="Lisää"
+        android:text="Leikepöydälle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.159"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +85,6 @@
         android:text="Tyhjennä lista"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.264"
-        app:layout_constraintStart_toEndOf="@+id/lisaa"
+        app:layout_constraintStart_toEndOf="@+id/leikepoyta"
         app:layout_constraintTop_toBottomOf="@+id/tekstikentta" />
 </androidx.constraintlayout.widget.ConstraintLayout>

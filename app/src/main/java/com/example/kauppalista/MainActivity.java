@@ -2,6 +2,8 @@ package com.example.kauppalista;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +18,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 //lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
-        Button lisaa = (Button) findViewById(R.id.lisaa);
+        Button leikepoyta = (Button) findViewById(R.id.leikepoyta);
         final EditText sana = (EditText) findViewById(R.id.tekstikentta);
 
         // Sanan lisäys enteria painamalla. Palauttaa falsen, koska silloin ei näppäimistö mene piiloon.
@@ -64,14 +65,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Sanan lisäys lisää-nappia painamalla.
-        lisaa.setOnClickListener(new View.OnClickListener() {
+        leikepoyta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lisaysNapinPainallus(sana);
+                leikepoyta();
             }
 
         });
-
 
 
                 //Aukaisee tallennettujen listojen valikon
@@ -230,5 +230,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+            }
+
+            public void leikepoyta(){
+                StringBuilder tuotteet = new StringBuilder();
+                for(int i = 0 ; i < tietokanta.ryhmanNimikkeet(nimikeryhma).size(); i++){
+                    tuotteet.append(tietokanta.ryhmanNimikkeet(nimikeryhma).get(i).getNimi() + "\n");
+                }
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("tuotteet", tuotteet);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "Tallennettu leikepöydälle", Toast.LENGTH_SHORT).show();
             }
         }
