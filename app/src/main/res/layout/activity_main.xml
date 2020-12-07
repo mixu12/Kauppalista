@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tyhjenna" />
+        app:layout_constraintTop_toBottomOf="@+id/leikepoyta" />
 
     <Button
         android:id="@+id/leikepoyta"
@@ -44,10 +44,11 @@
 
     <Button
         android:id="@+id/lataa"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="16dp"
-        android:text="Lataa"
+        android:text="Tallenna/Etsi lista"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.083"
@@ -55,25 +56,29 @@
 
     <Button
         android:id="@+id/paivita_lista"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
         android:layout_marginBottom="16dp"
         android:text="Päivitä lista"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintEnd_toStartOf="@+id/lahetys"
         app:layout_constraintStart_toEndOf="@+id/lataa" />
 
     <Button
         android:id="@+id/lahetys"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="3dp"
         android:layout_marginBottom="16dp"
         android:onClick="bluetoothNakyma"
-        android:text="Lähetä"
+        android:text="Bluetooth"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.407"
         app:layout_constraintStart_toEndOf="@+id/paivita_lista" />
 
     <Button

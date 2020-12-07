@@ -13,11 +13,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,17 +125,19 @@ public class MainActivity extends AppCompatActivity {
 
                         Nimike klikattu = (Nimike) parent.getItemAtPosition(i);
 
+
                         if (klikattu.getKeratty() == false) {
                             tietokanta.paivitaKeratyksi(klikattu);
-                            listView.setItemChecked(tietokanta.kaikkiNimikkeet().get(i).getId(), true);
+                            //listView.setItemChecked(klikattu.getId(), true);
+
 
                         } else {
                             tietokanta.paivitaKeraamattomaksi(klikattu);
-                            listView.setItemChecked(tietokanta.kaikkiNimikkeet().get(i).getId(), false);
+                           // listView.setItemChecked(klikattu.getId(), false);
                         }
 
                         paivitaLista();
-
+                        checkboxit();
                     }
                 });
 
@@ -235,11 +241,27 @@ public class MainActivity extends AppCompatActivity {
             public void leikepoyta(){
                 StringBuilder tuotteet = new StringBuilder();
                 for(int i = 0 ; i < tietokanta.ryhmanNimikkeet(nimikeryhma).size(); i++){
-                    tuotteet.append(tietokanta.ryhmanNimikkeet(nimikeryhma).get(i).getNimi() + "\n");
+                    if (i < tietokanta.ryhmanNimikkeet((nimikeryhma)).size()-1) {
+                        tuotteet.append(tietokanta.ryhmanNimikkeet(nimikeryhma).get(i).getNimi() + "\n");
+                    } else{
+                        tuotteet.append(tietokanta.ryhmanNimikkeet(nimikeryhma).get(i).getNimi());
+                    }
                 }
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("tuotteet", tuotteet);
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "Tallennettu leikepöydälle", Toast.LENGTH_SHORT).show();
+            }
+
+            public void checkboxit(){
+                List<Nimike> listaus = new ArrayList<>();
+                listaus = tietokanta.kaikkiNimikkeet();
+                for (int i = 0; i < listaus.size(); i++){
+                    if (listaus.get(i).getKeratty() == true){
+                        listView.setItemChecked(i, true);
+                        System.out.println("testi");
+                    }
+
+                }
             }
         }
