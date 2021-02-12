@@ -1,24 +1,25 @@
 package com.example.kauppalista;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter arrayAdapter;
     Tietokanta tietokanta;
 
+    private int buttonId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
 //listViewiin tulee näkyviin tallennetut ostokset
         listView = (ListView) findViewById(R.id.listview);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        listView.setLongClickable(true);
-
+       // listView.setLongClickable(true); //Tätä ei enää tarvitse, koska mukana on menu, joka aukeaa oletuksena pitkällä klikkauksella
+        registerForContextMenu(listView);
 
         tietokanta = new Tietokanta(MainActivity.this);
         paivitaLista();
@@ -106,18 +109,22 @@ public class MainActivity extends AppCompatActivity {
 
                 });
 
-                //Tämä ohjaa jo kerätyksi merkattujen laatikoiden merkkejä, jos jotain poistaa välistä.
-                //Ilman tätä vain listassa oleva teksti poistuu, mutta merkki jää muistiin ja siirtyy väärään paikkaan.
+
+                //Tätä ei enää tarvitse, koska mukana on menu, joka aukeaa oletuksena pitkällä klikkauksella.
+/*
                 listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
+
                         Nimike klikattu = (Nimike) parent.getItemAtPosition(position);
                         tietokanta.poistaYksi(klikattu);
                         paivitaLista();
-                        return true;
+
+                        return false;
                     }
                 });
+*/
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -264,4 +271,31 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
+
+     @Override
+     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        getMenuInflater().inflate(R.menu.menu, menu);
+        menu.setHeaderTitle("Valitse toiminto");
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.poista:
+                AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                Nimike klikattu = (Nimike) listView.getItemAtPosition(menuInfo.position);
+                tietokanta.poistaYksi(klikattu);
+                paivitaLista();
+                //Toast.makeText(this, "poistettu", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.muokkaa:
+                Toast.makeText(this, "muokkaa", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
         }
+
+    }
+}
