@@ -282,16 +282,37 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final Nimike klikattu = (Nimike) listView.getItemAtPosition(menuInfo.position);
         switch (item.getItemId()){
             case R.id.poista:
-                AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                Nimike klikattu = (Nimike) listView.getItemAtPosition(menuInfo.position);
                 tietokanta.poistaYksi(klikattu);
                 paivitaLista();
                 //Toast.makeText(this, "poistettu", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.muokkaa:
-                Toast.makeText(this, "muokkaa", Toast.LENGTH_SHORT).show();
+                final EditText sana = (EditText) findViewById(R.id.tekstikentta);
+                sana.setText(klikattu.getNimi());
+
+                // Sanan lisäys enteria painamalla. Palauttaa falsen, koska silloin ei näppäimistö mene piiloon.
+                sana.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                            String muokattuTuote = sana.getText().toString();
+                            if (!muokattuTuote.isEmpty()) {
+                                tietokanta.muokkaaTuotetta(klikattu, muokattuTuote);
+                            }
+                            paivitaLista();
+                            sana.setText("");
+                            Toast.makeText(MainActivity.this, "muokattu", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            return false;
+                        }
+                        return true;
+                    }
+                });
                 return true;
             default:
                 return super.onContextItemSelected(item);

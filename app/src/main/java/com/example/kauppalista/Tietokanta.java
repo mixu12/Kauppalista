@@ -180,6 +180,21 @@ public class Tietokanta extends SQLiteOpenHelper {
         }
     }
 
+    public boolean muokkaaTuotetta(Nimike nimike, String muokattuNimi) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String queryString = "UPDATE " + LISTA + " SET " + COLUMN_TUOTTEEN_NIMI + " = ?" + " WHERE " + COLUMN_ID + " = " + nimike.getId();
+        String[] valinnat = {muokattuNimi};
+
+        Cursor cursor = db.rawQuery(queryString, valinnat);
+
+        if (cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean poistaKaikki(){
 
         SQLiteDatabase db = this.getWritableDatabase();
