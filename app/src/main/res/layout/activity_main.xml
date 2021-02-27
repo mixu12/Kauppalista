@@ -11,9 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
         android:longClickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/paivita_lista"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,12 +19,15 @@
 
     <Button
         android:id="@+id/leikepoyta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="114dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Leikepöydälle"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/tyhjenna"
+        app:layout_constraintStart_toEndOf="@+id/lataa"
         app:layout_constraintTop_toBottomOf="@+id/tekstikentta" />
 
     <EditText
@@ -45,50 +46,23 @@
 
     <Button
         android:id="@+id/lataa"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="87dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="Luo/Etsi lista"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.083"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/paivita_lista"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginBottom="16dp"
-        android:text="Päivitä listan nimi"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/lahetys"
-        app:layout_constraintStart_toEndOf="@+id/lataa" />
-
-    <Button
-        android:id="@+id/lahetys"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="bluetoothNakyma"
-        android:text="Bluetooth"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.407"
-        app:layout_constraintStart_toEndOf="@+id/paivita_lista" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tekstikentta" />
 
     <Button
         android:id="@+id/tyhjenna"
-        android:layout_width="155dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
+        android:layout_width="87dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Tyhjennä lista"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tekstikentta" />
 </androidx.constraintlayout.widget.ConstraintLayout>

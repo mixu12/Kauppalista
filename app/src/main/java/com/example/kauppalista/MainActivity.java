@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -149,16 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
-                //Aukaisee tallennus-ikkunan. Intent.putExtra-komennolla siirretään arrayList-lista tallennus-luokkaan.
-                final Button tallenna = (Button) findViewById(R.id.paivita_lista);
-                tallenna.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
-                        intent.putExtra("nimikeryhmä", nimikeryhma);
-                        startActivity(intent);
-                    }
-                });
 
                 //tämä tuo arraylistan BluetoothinHallinta-luokasta
                 Intent intent = getIntent();
@@ -176,10 +168,10 @@ public class MainActivity extends AppCompatActivity {
         private void paivitaLista() {
             if(nimikeryhma != null){
                 //jos haluaa saada checkboxin käyttöön, niin vaihtaa kohdan android.R.layout.simple_list_item_1 muotoon R.layout.rowlayout
-                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, android.R.layout.simple_list_item_1, tietokanta.ryhmanNimikkeet(nimikeryhma));
+                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, R.layout.etusivun_listview_layout, tietokanta.ryhmanNimikkeet(nimikeryhma));
                 listView.setAdapter(arrayAdapter);
             } else {
-                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, android.R.layout.simple_list_item_1, tietokanta.kaikkiNimikkeet());
+                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, R.layout.etusivun_listview_layout, tietokanta.kaikkiNimikkeet());
                 listView.setAdapter(arrayAdapter);
             }
         }
@@ -317,6 +309,30 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.ylamenu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.paivita_nimi_valikko:
+                        Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
+                        intent.putExtra("nimikeryhmä", nimikeryhma);
+                        startActivity(intent);
+                        return true;
+            case R.id.Bluetooth_valikko:
+                        Intent intent2 = new Intent(this, BluetoothinHallinta.class);
+                        intent2.putExtra("ITEMS", arrayList);
+                        startActivity(intent2);
+                        return true;
+                    };
+
+        return super.onOptionsItemSelected(item);
     }
 }
