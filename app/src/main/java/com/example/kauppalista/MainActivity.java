@@ -112,22 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
-                //Tätä ei enää tarvitse, koska mukana on menu, joka aukeaa oletuksena pitkällä klikkauksella.
-/*
-                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-                        Nimike klikattu = (Nimike) parent.getItemAtPosition(position);
-                        tietokanta.poistaYksi(klikattu);
-                        paivitaLista();
-
-                        return false;
-                    }
-                });
-*/
-
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int i, long l) {

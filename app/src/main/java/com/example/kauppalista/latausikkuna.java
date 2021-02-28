@@ -27,9 +27,6 @@ public class latausikkuna extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
-
-
-
         super.onCreate(savedInstanceState);
 
         //Ulkonäön määrittelyä
@@ -47,7 +44,6 @@ public class latausikkuna extends Activity {
         tietokanta = new Tietokanta(latausikkuna.this);
         listaus = (ListView) findViewById(R.id.listaus);
         paivitaLista();
-
 
         listaus.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -77,7 +73,7 @@ public class latausikkuna extends Activity {
     }
 
     private void paivitaLista() {
-        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, android.R.layout.simple_list_item_1, tietokanta.getRyhmat());
+        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, R.layout.etusivun_listview_layout, tietokanta.getRyhmat());
         listaus.setAdapter(arrayAdapter);
         }
 
