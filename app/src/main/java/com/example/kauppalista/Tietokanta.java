@@ -27,7 +27,7 @@ public class Tietokanta extends SQLiteOpenHelper {
     // Tätä kutsutaan kun ensimmäisen kerran tarvitaan tietokantaa. Tämä luo uuden sellaisen.
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableStatement = "CREATE TABLE " + LISTA + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_TUOTTEEN_NIMI + " TEXT, " + COLUMN_ONKO + " BOOL, " + COLUMN_RYHMA + " STRING)";
+        String createTableStatement = "CREATE TABLE " + LISTA + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_TUOTTEEN_NIMI + " TEXT, " + COLUMN_ONKO + " BOOL, " + COLUMN_RYHMA + " TEXT)";
         db.execSQL(createTableStatement);
     }
 
@@ -52,8 +52,8 @@ public class Tietokanta extends SQLiteOpenHelper {
         } else {
             return true;
         }
-    }
 
+    }
     public List<Nimike> kaikkiNimikkeet(){
         List<Nimike> nimikkeet = new ArrayList<>();
 
