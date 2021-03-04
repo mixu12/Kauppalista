@@ -1,8 +1,5 @@
 package com.example.kauppalista;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -42,11 +39,14 @@ public class Nimike implements Serializable {
     }
 
     public String toString(){
+/*
         if (this.keratty == false) {
             return this.nimi + " " + this.ryhma;
         } else {
             return "";
         }
+ */
+        return this.nimi + " " + this.ryhma;
     }
 
     public String getRyhma(){

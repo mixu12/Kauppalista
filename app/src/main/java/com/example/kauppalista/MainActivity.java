@@ -120,16 +120,13 @@ public class MainActivity extends AppCompatActivity {
 
                         if (klikattu.getKeratty() == false) {
                             tietokanta.paivitaKeratyksi(klikattu);
-                            //listView.setItemChecked(klikattu.getId(), true);
-
 
                         } else {
                             tietokanta.paivitaKeraamattomaksi(klikattu);
-                           // listView.setItemChecked(klikattu.getId(), false);
                         }
 
                         paivitaLista();
-                        checkboxit();
+
                     }
                 });
 
@@ -153,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 //jos haluaa saada checkboxin käyttöön, niin vaihtaa kohdan android.R.layout.simple_list_item_1 muotoon R.layout.rowlayout
                 arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, R.layout.etusivun_listview_layout, tietokanta.ryhmanNimikkeet(nimikeryhma));
                 listView.setAdapter(arrayAdapter);
+                checkboxit();
             } else {
                 arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, R.layout.etusivun_listview_layout, tietokanta.kaikkiNimikkeet());
                 listView.setAdapter(arrayAdapter);
@@ -237,13 +235,11 @@ public class MainActivity extends AppCompatActivity {
 
             public void checkboxit(){
                 List<Nimike> listaus = new ArrayList<>();
-                listaus = tietokanta.kaikkiNimikkeet();
+                listaus = tietokanta.ryhmanNimikkeet(nimikeryhma);
                 for (int i = 0; i < listaus.size(); i++){
                     if (listaus.get(i).getKeratty() == true){
                         listView.setItemChecked(i, true);
-                        System.out.println("testi");
                     }
-
                 }
             }
 

@@ -73,7 +73,7 @@ public class latausikkuna extends Activity {
     }
 
     private void paivitaLista() {
-        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, R.layout.etusivun_listview_layout, tietokanta.getRyhmat());
+        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, R.layout.muut_listviewit_paitsi_etusivu, tietokanta.getRyhmat());
         listaus.setAdapter(arrayAdapter);
         }
 
