@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
                         Nimike klikattu = (Nimike) parent.getItemAtPosition(i);
 
-
                         if (klikattu.getKeratty() == false) {
                             tietokanta.paivitaKeratyksi(klikattu);
 
