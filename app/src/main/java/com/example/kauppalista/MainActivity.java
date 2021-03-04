@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter arrayAdapter;
     Tietokanta tietokanta;
 
-    private int buttonId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
