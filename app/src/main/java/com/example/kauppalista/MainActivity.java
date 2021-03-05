@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -36,9 +35,8 @@ public class MainActivity extends AppCompatActivity {
     public static String nimikeryhma = "tyhjä";
 
     // Luo tyhjän ArrayAdapterin ja tietokannan
-    ArrayAdapter arrayAdapter;
+    CustomAdapter arrayAdapter;
     Tietokanta tietokanta;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(listView);
 
         tietokanta = new Tietokanta(MainActivity.this);
-        paivitaLista();
 
 
 //lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
@@ -89,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent intent = new Intent(MainActivity.this, latausikkuna.class);
                         startActivity(intent);
-
                     }
 
                 });
@@ -101,11 +97,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         if(nimikeryhma != null) {
                             tietokanta.poistaKaikki(nimikeryhma);
-                            paivitaLista();
                         } else {
                             tietokanta.poistaKaikki();
-                            paivitaLista();
                         }
+                        paivitaLista();
                     }
 
                 });
@@ -145,13 +140,20 @@ public class MainActivity extends AppCompatActivity {
             }
 
         private void paivitaLista() {
+            // Näiden avulla lista palautuu samalle paikalle kuin se olikin.
+            int lastViewedPosition = listView.getFirstVisiblePosition();
+            View v = listView.getChildAt(0);
+            int topOffset = (v == null) ? 0 : v.getTop();
+
             if(nimikeryhma != null){
                 //jos haluaa saada checkboxin käyttöön, niin vaihtaa kohdan android.R.layout.simple_list_item_1 muotoon R.layout.rowlayout
-                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, R.layout.etusivun_listview_layout, tietokanta.ryhmanNimikkeet(nimikeryhma));
+                arrayAdapter = new CustomAdapter<Nimike>(MainActivity.this, R.layout.listview_checkboxilla, tietokanta.ryhmanNimikkeet(nimikeryhma));
                 listView.setAdapter(arrayAdapter);
                 checkboxit();
+                //Tämä tekee lopullisen siirron listassa oikeaan paikkaan.
+                listView.setSelectionFromTop(lastViewedPosition, topOffset);
             } else {
-                arrayAdapter = new ArrayAdapter<Nimike>(MainActivity.this, R.layout.etusivun_listview_layout, tietokanta.kaikkiNimikkeet());
+                arrayAdapter = new CustomAdapter<Nimike>(MainActivity.this, R.layout.listview_checkboxilla, tietokanta.kaikkiNimikkeet());
                 listView.setAdapter(arrayAdapter);
             }
         }
@@ -313,4 +315,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
+

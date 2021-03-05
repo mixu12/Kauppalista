@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
 
     <ListView
         android:id="@+id/listview"
@@ -33,7 +35,7 @@
         app:layout_constraintStart_toEndOf="@+id/lataa"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <com.example.kauppalista.EditTextV2
         android:id="@+id/tekstikentta"
         android:layout_width="296dp"
         android:layout_height="46dp"
@@ -68,4 +70,6 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

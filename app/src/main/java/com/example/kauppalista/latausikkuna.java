@@ -70,10 +70,11 @@ public class latausikkuna extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("NIMI", nimikeryhma);
         startActivity(intent);
+        finish();
     }
 
     private void paivitaLista() {
-        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, R.layout.muut_listviewit_paitsi_etusivu, tietokanta.getRyhmat());
+        arrayAdapter = new ArrayAdapter<Nimike>(latausikkuna.this, R.layout.listview_ilman_checkboxia, tietokanta.getRyhmat());
         listaus.setAdapter(arrayAdapter);
         }
 
