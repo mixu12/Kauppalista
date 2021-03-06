@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/poista_valitut"
+        android:title="Poista valitut" />
+
+    <item
         android:id="@+id/paivita_nimi_valikko"
         android:title="Päivitä listan nimi" />
 

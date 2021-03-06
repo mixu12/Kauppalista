@@ -224,6 +224,21 @@ public class Tietokanta extends SQLiteOpenHelper {
         }
     }
 
+    public boolean poistaKaikkiKeratyt(String poistettava_ryhma){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM " + LISTA + " WHERE " + COLUMN_RYHMA + " = ? AND " +  COLUMN_ONKO + " = '1'";
+        String[] valittu = {poistettava_ryhma};
+
+        Cursor cursor = db.rawQuery(queryString, valittu);
+
+        if (cursor.moveToFirst()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Tämä vie latausikkuna-luokalle kaikki erilaiset ryhmät
     public List<Nimike> getRyhmat(){
         List<Nimike> nimikkeet = new ArrayList<>();

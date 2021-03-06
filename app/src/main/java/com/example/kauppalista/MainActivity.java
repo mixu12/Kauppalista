@@ -302,16 +302,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.paivita_nimi_valikko:
-                        Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
-                        intent.putExtra("nimikeryhmä", nimikeryhma);
-                        startActivity(intent);
-                        return true;
+                Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
+                intent.putExtra("nimikeryhmä", nimikeryhma);
+                startActivity(intent);
+                return true;
             case R.id.Bluetooth_valikko:
-                        Intent intent2 = new Intent(this, BluetoothinHallinta.class);
-                        intent2.putExtra("ITEMS", arrayList);
-                        startActivity(intent2);
-                        return true;
-                    };
+                Intent intent2 = new Intent(this, BluetoothinHallinta.class);
+                intent2.putExtra("ITEMS", arrayList);
+                startActivity(intent2);
+                return true;
+            case R.id.poista_valitut:
+                tietokanta.poistaKaikkiKeratyt(nimikeryhma);
+                paivitaLista();
+                return true;
+        };
 
         return super.onOptionsItemSelected(item);
     }
