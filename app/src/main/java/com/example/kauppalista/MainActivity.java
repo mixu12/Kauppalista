@@ -32,11 +32,11 @@ public class MainActivity extends AppCompatActivity {
     final ArrayList<String> arrayList = new ArrayList<>();
     public ArrayList<String> vastaanotettu = new ArrayList<>();
 
-    public static String nimikeryhma = "tyhjä";
-
     // Luo tyhjän ArrayAdapterin ja tietokannan
     CustomAdapter arrayAdapter;
     Tietokanta tietokanta;
+
+    public static String nimikeryhma = "tyhjä";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
         tietokanta = new Tietokanta(MainActivity.this);
 
+        if (nimikeryhma.equals("tyhjä") && tietokanta.getViimeisinRyhma() != null) {
+            nimikeryhma = tietokanta.getViimeisinRyhma();
+            System.out.println(nimikeryhma);
+            paivitaLista();
+
+        }
 
 //lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
         Button leikepoyta = (Button) findViewById(R.id.leikepoyta);
@@ -133,6 +139,16 @@ public class MainActivity extends AppCompatActivity {
                 String nimikeryhmaLatausikkunasta = (String) intent.getSerializableExtra("NIMI");
                 if (nimikeryhmaLatausikkunasta != null){
                     nimikeryhma = nimikeryhmaLatausikkunasta;
+                    ViimeisinLista viimeisinLista = new ViimeisinLista(-1, nimikeryhma);
+
+                    // Lisäys SQLite kantaan.
+                    Tietokanta tietokanta = new Tietokanta(MainActivity.this);
+
+                    boolean viimeisimmanLisays = tietokanta.lisaaViimeisinLista(viimeisinLista);
+
+                    // Hakee koko tietokannan listaan ja laittaa sen näkyville.
+                    paivitaLista();
+                    arrayAdapter.notifyDataSetChanged();
                 }
 
                 paivitaLista();

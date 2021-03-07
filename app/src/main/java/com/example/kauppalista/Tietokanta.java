@@ -13,27 +13,47 @@ import java.util.List;
 
 public class Tietokanta extends SQLiteOpenHelper {
 
-
-    public static final String LISTA = "LISTA";
+    //Nimikkeen kentät
+    public static final String LISTA = "LISTA"; //Huono nimi taululle. TAULU_NIMIKKEET olisi parempi, mutta ei voinut enää muuttaa.
     public static final String COLUMN_TUOTTEEN_NIMI = "TUOTTEEN_NIMI";
     public static final String COLUMN_ONKO = "ONKO";
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_RYHMA = "RYHMA";
 
+    //Listojen kentät
+    public static final String TAULU_LISTAT = "TAULU_LISTAT";
+    public static final String COLUMN_LISTOJEN_NIMET = "LISTOJEN_NIMET";
+    public static final String COLUMN_LISTOJEN_ID = "LISTOJEN_ID";
+    public static final String COLUMN_LISTAN_MUOKKAUSPAIVA = "LISTAN_MUOKKAUSPAIVA";
+
+    //Viimeisin lista
+    public static final String TAULU_VIIMEISIN_LISTA = "TAULU_VIIMEISIN_LISTA";
+    public static final String COLUMN_VIIMEISIMMAN_LISTAN_NIMI = "VIIMEISIMMAN_LISTAN_NIMI";
+    public static final String COLUMN_VIIMEISIMMAN_LISTAN_ID = "VIIMEISIMMAN_LISTAN_ID";
+
     public Tietokanta(@Nullable Context context) {
-        super(context, "lista.db", null, 1);
+        super(context, "lista.db", null, 2);
     }
 
     // Tätä kutsutaan kun ensimmäisen kerran tarvitaan tietokantaa. Tämä luo uuden sellaisen.
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableStatement = "CREATE TABLE " + LISTA + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_TUOTTEEN_NIMI + " TEXT, " + COLUMN_ONKO + " BOOL, " + COLUMN_RYHMA + " TEXT)";
-        db.execSQL(createTableStatement);
+        String nimikkeet = "CREATE TABLE " + LISTA + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_TUOTTEEN_NIMI + " TEXT, " + COLUMN_ONKO + " BOOL, " + COLUMN_RYHMA + " TEXT)";
+        db.execSQL(nimikkeet);
+
+        String viimeisinLista = "CREATE TABLE " + TAULU_VIIMEISIN_LISTA + " (" + COLUMN_VIIMEISIMMAN_LISTAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_VIIMEISIMMAN_LISTAN_NIMI + " TEXT)";
+        db.execSQL(viimeisinLista);
     }
 
     // Tämä huolehtaa tietokannan versionumeroinnista. Tarkoitus on estää tietokannan hajoaminen muutoksia tehdessä.
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int vanhaVersio, int uusiVersio) {
+
+        if (vanhaVersio == 1) {
+            String viimeisinLista = "CREATE TABLE " + TAULU_VIIMEISIN_LISTA + " (" + COLUMN_VIIMEISIMMAN_LISTAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_VIIMEISIMMAN_LISTAN_NIMI + " TEXT)";
+            sqLiteDatabase.execSQL(viimeisinLista);
+            vanhaVersio++;
+        }
 
     }
 
@@ -254,8 +274,6 @@ public class Tietokanta extends SQLiteOpenHelper {
             // Käy läpi kaikki tallennetut tiedot ja luo uuden nimike-olion. Laittaa ne sitten listaan, joka palautetaan.
             do {
                 int id = cursor.getInt(0);
-             //   String nimike = cursor.getString(1);
-              //  boolean onko = cursor.getInt(2) == 1 ? true: false; // Tämä on lyhenne if-else rakenteesta. Jos ensimmäinen on totta, valitaan kysymysmerkin jälkeen tuleva, jos ei, niin sitten kaksoispisteen jälkeen oleva.
                 String ryhma = cursor.getString(0);
 
                 Nimike uusiNimike = new Nimike(id, "", false, ryhma);
@@ -271,4 +289,48 @@ public class Tietokanta extends SQLiteOpenHelper {
         db.close();
         return nimikkeet;
     }
+
+    public boolean lisaaViimeisinLista(ViimeisinLista viimeisinLista){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_VIIMEISIMMAN_LISTAN_NIMI, viimeisinLista.getListanNimi());
+
+        long insert = db.insert(TAULU_VIIMEISIN_LISTA, null, cv);
+        if (insert == -1){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public String getViimeisinRyhma(){
+        List<ViimeisinLista> viimeisinLista = new ArrayList<>();
+
+        String viimeisinRyhma = "tyhja";
+        System.out.println("testausta");
+        // Datan haku kannasta
+
+        String queryString = "SELECT " + COLUMN_VIIMEISIMMAN_LISTAN_NIMI + " as viimeisin FROM " + TAULU_VIIMEISIN_LISTA + " ORDER BY " + COLUMN_VIIMEISIMMAN_LISTAN_ID + " DESC LIMIT 1 ";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if (cursor.moveToFirst()) {
+            // Käy läpi kaikki tallennetut tiedot ja luo uuden nimike-olion. Laittaa ne sitten listaan, joka palautetaan.
+            do {
+                viimeisinRyhma = cursor.getString(cursor.getColumnIndex("viimeisin"));
+
+            } while (cursor.moveToNext());
+
+        } else {
+            // Jos tulee virhe
+        }
+        // Sulkee tietokannan
+        cursor.close();
+        db.close();
+        return viimeisinRyhma;
+    }
+
 }
