@@ -13,4 +13,8 @@
         android:id="@+id/Bluetooth_valikko"
         android:title="Bluetooth" />
 
+    <item
+        android:id="@+id/Pdfkasittely"
+        android:title="PDF:n luku" />
+
 </menu>

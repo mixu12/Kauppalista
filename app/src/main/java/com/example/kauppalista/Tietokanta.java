@@ -309,7 +309,7 @@ public class Tietokanta extends SQLiteOpenHelper {
         List<ViimeisinLista> viimeisinLista = new ArrayList<>();
 
         String viimeisinRyhma = "tyhja";
-        System.out.println("testausta");
+
         // Datan haku kannasta
 
         String queryString = "SELECT " + COLUMN_VIIMEISIMMAN_LISTAN_NIMI + " as viimeisin FROM " + TAULU_VIIMEISIN_LISTA + " ORDER BY " + COLUMN_VIIMEISIMMAN_LISTAN_ID + " DESC LIMIT 1 ";

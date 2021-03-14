@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static String nimikeryhma = "tyhjä";
 
+    //PDFBox for Androidin käyttöä varten
+    File root;
+    AssetManager assetManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -54,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (nimikeryhma.equals("tyhjä") && tietokanta.getViimeisinRyhma() != null) {
             nimikeryhma = tietokanta.getViimeisinRyhma();
-            System.out.println(nimikeryhma);
             paivitaLista();
 
         }
@@ -135,6 +140,13 @@ public class MainActivity extends AppCompatActivity {
                 //tämä tuo arraylistan BluetoothinHallinta-luokasta
                 Intent intent = getIntent();
                 vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("ITEMS");
+                vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("PDF");
+
+                if (vastaanotettu != null){
+                    if (vastaanotettu.size() > 0);
+                    vastaanotetutDatat();
+                    vastaanotettu.clear();
+                }
 
                 String nimikeryhmaLatausikkunasta = (String) intent.getSerializableExtra("NIMI");
                 if (nimikeryhmaLatausikkunasta != null){
@@ -331,9 +343,20 @@ public class MainActivity extends AppCompatActivity {
                 tietokanta.poistaKaikkiKeratyt(nimikeryhma);
                 paivitaLista();
                 return true;
+            case R.id.Pdfkasittely:
+                Intent intent3 = new Intent(this, Pdfkasittely.class);
+                startActivity(intent3);
+                return true;
         };
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void vastaanotetutDatat(){
+        for (int i = 0; i < vastaanotettu.size(); i++){
+            String sana = vastaanotettu.get(i);
+            lisaa(sana);
+        }
     }
 
 }
