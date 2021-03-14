@@ -102,15 +102,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 //Tyhjentää näkyvillä olevan listan kokonaan, mutta ei muokkaa jo tallennettua listaa
-                Button tyhjenna = (Button) findViewById(R.id.tyhjenna);
-                tyhjenna.setOnClickListener(new View.OnClickListener() {
+                Button poistaValitut = (Button) findViewById(R.id.poistaValitut);
+                poistaValitut.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(nimikeryhma != null) {
-                            tietokanta.poistaKaikki(nimikeryhma);
-                        } else {
-                            tietokanta.poistaKaikki();
-                        }
+                        tietokanta.poistaKaikkiKeratyt(nimikeryhma);
                         paivitaLista();
                     }
 
@@ -339,8 +335,12 @@ public class MainActivity extends AppCompatActivity {
                 intent2.putExtra("ITEMS", arrayList);
                 startActivity(intent2);
                 return true;
-            case R.id.poista_valitut:
-                tietokanta.poistaKaikkiKeratyt(nimikeryhma);
+            case R.id.tyhjennaLista:
+                if(nimikeryhma != null) {
+                    tietokanta.poistaKaikki(nimikeryhma);
+                } else {
+                    tietokanta.poistaKaikki();
+                }
                 paivitaLista();
                 return true;
             case R.id.Pdfkasittely:

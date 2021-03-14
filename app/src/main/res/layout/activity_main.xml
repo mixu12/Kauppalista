@@ -30,7 +30,7 @@
         android:layout_marginEnd="16dp"
         android:text="Leikepöydälle"
         android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/tyhjenna"
+        app:layout_constraintEnd_toStartOf="@+id/poistaValitut"
         app:layout_constraintHorizontal_bias="0.596"
         app:layout_constraintStart_toEndOf="@+id/lataa"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,12 +61,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/tyhjenna"
+        android:id="@+id/poistaValitut"
         android:layout_width="87dp"
         android:layout_height="55dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
-        android:text="Tyhjennä lista"
+        android:text="Poista valitut"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
