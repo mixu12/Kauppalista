@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Pdfkasittely extends AppCompatActivity {
 
@@ -37,9 +39,20 @@ public class Pdfkasittely extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdfkasittely);
 
+
+
         PDFBoxResourceLoader.init(getApplicationContext());
 
         setListaus();
+
+        Button pdfOK = (Button) findViewById(R.id.pdfOK);
+
+        pdfOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stripText(view);
+            }
+        });
     }
 
     /**
@@ -50,9 +63,7 @@ public class Pdfkasittely extends AppCompatActivity {
         String parsedText = null;
         PDDocument document = null;
         try {
-            System.out.println("aaaa");
             document = PDDocument.load(input);
-            System.out.println("b");
         } catch(IOException e) {
             Log.e("PdfBox-Android-Sample", "Exception thrown while loading document to strip", e);
         }
@@ -75,7 +86,6 @@ public class Pdfkasittely extends AppCompatActivity {
                 Log.e("PdfBox-Android-Sample", "Exception thrown while closing document", e);
             }
         }
-
         setlistaan(parsedText);
         mainNakyma(v);
     }
@@ -85,16 +95,21 @@ public class Pdfkasittely extends AppCompatActivity {
         File tiedostot = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()); //Hakee tiedostokansion oletustiedoston nimellä.
         System.out.println(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
         File[] tiedostolista = tiedostot.listFiles(); //Muodostaa tiedostoista taulukon.
-        final String[] tiedostojenNimet = new String[tiedostolista.length];
 
-        for (int i = 0; i < tiedostojenNimet.length; i++) { //Tiedostojen läpikäynti
-            tiedostojenNimet[i] = tiedostolista[i].getName();
+        final ArrayList<String> tiedostojenNimetListassa = new ArrayList<>();
+
+        for (int i = 0; i < tiedostolista.length; i++) { //Tiedostojen läpikäynti
+            if (tiedostolista[i].getName().contains(".pdf")) { //Suodattaa vain pdf-tiedostot näkyville
+                tiedostojenNimetListassa.add(tiedostolista[i].getName()); //Ilman tätä listalla aakkostamisen jälkeen nimet jakautuvat isolla ja pienellä kirjaimella alkaviin.
+            }
         }
+
+        Collections.sort(tiedostojenNimetListassa); //Järjestää listan aakkosjärjestykseen
 
         //Tästä eteenpäin lisää tiedostot näkyviin ListViewiin
         listaus = (ListView) findViewById(R.id.listaus);
         listaus.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        final ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tiedostojenNimet);
+        final ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tiedostojenNimetListassa);
 
         listaus.setAdapter(arrayAdapter);
 
@@ -102,8 +117,9 @@ public class Pdfkasittely extends AppCompatActivity {
         listaus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                FILE_NAME = tiedostojenNimet[i].toString();
-                stripText(view);
+                FILE_NAME = tiedostojenNimetListassa.get(i);
+                TextView pdfNimi = (TextView) findViewById(R.id.pdfNimi);
+                pdfNimi.setText(FILE_NAME);
             }
         });
 
@@ -125,4 +141,5 @@ public class Pdfkasittely extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 }
