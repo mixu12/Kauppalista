@@ -100,7 +100,7 @@ public class Pdfkasittely extends AppCompatActivity {
 
         for (int i = 0; i < tiedostolista.length; i++) { //Tiedostojen läpikäynti
             if (tiedostolista[i].getName().contains(".pdf")) { //Suodattaa vain pdf-tiedostot näkyville
-                tiedostojenNimetListassa.add(tiedostolista[i].getName()); //Ilman tätä listalla aakkostamisen jälkeen nimet jakautuvat isolla ja pienellä kirjaimella alkaviin.
+                tiedostojenNimetListassa.add(tiedostolista[i].getName().toLowerCase());
             }
         }
 
