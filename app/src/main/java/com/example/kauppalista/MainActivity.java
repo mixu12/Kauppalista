@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +37,6 @@ public class MainActivity extends AppCompatActivity {
     Tietokanta tietokanta;
 
     public static String nimikeryhma = "tyhjä";
-
-    //PDFBox for Androidin käyttöä varten
-    File root;
-    AssetManager assetManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 //lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
-        Button leikepoyta = (Button) findViewById(R.id.leikepoyta);
-        final EditText sana = (EditText) findViewById(R.id.tekstikentta);
+        Button leikepoyta = findViewById(R.id.leikepoyta);
+        final EditText sana = findViewById(R.id.tekstikentta);
 
         // Sanan lisäys enteria painamalla. Palauttaa falsen, koska silloin ei näppäimistö mene piiloon.
         sana.setOnKeyListener(new View.OnKeyListener() {
@@ -191,13 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            //Siirtyminen bluetooth-ikkunaan.
-            public void bluetoothNakyma(View view) {
-                Intent intent = new Intent(this, BluetoothinHallinta.class);
-                intent.putExtra("ITEMS", arrayList);
-                startActivity(intent);
-            }
-
             // Valmistelee sanan lisäyksen ennen lopullista lisäämistä tauluun hakemalla lisätyn sanan.
             public void lisaysNapinPainallus(EditText sana){
                 Nimike nimike;
@@ -241,6 +228,15 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+            }
+
+            public void tyhjennys(){
+                if(nimikeryhma != null) {
+                    tietokanta.poistaKaikki(nimikeryhma);
+                } else {
+                    tietokanta.poistaKaikki();
+                }
+                paivitaLista();
             }
 
             public void leikepoyta(){
@@ -326,26 +322,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.paivita_nimi_valikko:
-                Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
-                intent.putExtra("nimikeryhmä", nimikeryhma);
-                startActivity(intent);
+                paivitaNimiValikko();
                 return true;
             case R.id.Bluetooth_valikko:
-                Intent intent2 = new Intent(this, BluetoothinHallinta.class);
-                intent2.putExtra("ITEMS", arrayList);
-                startActivity(intent2);
+                bluetoothNakyma();
                 return true;
             case R.id.tyhjennaLista:
-                if(nimikeryhma != null) {
-                    tietokanta.poistaKaikki(nimikeryhma);
-                } else {
-                    tietokanta.poistaKaikki();
-                }
-                paivitaLista();
+                tyhjennys();
                 return true;
             case R.id.Pdfkasittely:
-                Intent intent3 = new Intent(this, Pdfkasittely.class);
-                startActivity(intent3);
+                pdfKasittely();
                 return true;
         };
 
@@ -357,6 +343,26 @@ public class MainActivity extends AppCompatActivity {
             String sana = vastaanotettu.get(i);
             lisaa(sana);
         }
+    }
+
+    //INTENTIT
+
+    //Siirtyminen bluetooth-ikkunaan.
+    public void bluetoothNakyma() {
+        Intent intent = new Intent(this, BluetoothinHallinta.class);
+        intent.putExtra("ITEMS", arrayList);
+        startActivity(intent);
+    }
+
+    public void paivitaNimiValikko(){
+        Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
+        intent.putExtra("nimikeryhmä", nimikeryhma);
+        startActivity(intent);
+    }
+
+    public void pdfKasittely(){
+        Intent intent = new Intent(this, Pdfkasittely.class);
+        startActivity(intent);
     }
 
 }
