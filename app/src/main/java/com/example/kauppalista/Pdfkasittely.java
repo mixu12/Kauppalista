@@ -93,7 +93,7 @@ public class Pdfkasittely extends AppCompatActivity {
     public void setListaus(){
 
         File tiedostot = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()); //Hakee tiedostokansion oletustiedoston nimellä.
-        System.out.println(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+        System.out.println(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
         File[] tiedostolista = tiedostot.listFiles(); //Muodostaa tiedostoista taulukon.
 
         final ArrayList<String> tiedostojenNimetListassa = new ArrayList<>();
