@@ -72,7 +72,6 @@ public class BluetoothinHallinta extends AppCompatActivity {
 
         Intent intent = getIntent();
         lahetettava = (ArrayList<String>) intent.getSerializableExtra("Nimikkeet");
-        System.out.println(lahetettava);
 
         tallennus = new ArrayList<>();
     }
