@@ -1,8 +1,5 @@
 package com.example.kauppalista;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -11,19 +8,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -51,7 +48,7 @@ public class BluetoothinHallinta extends AppCompatActivity {
 
     int REQUEST_ENABLE_BLUETOOTH = 1;
 
-    private static final String APP_NAME = "BTChat";
+    private static final String APP_NAME = "Kauppalista";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-223a-11e0-ac64-0803450c9a66");
 
 
@@ -74,7 +71,8 @@ public class BluetoothinHallinta extends AppCompatActivity {
         implementListeners();
 
         Intent intent = getIntent();
-        lahetettava = (ArrayList<String>) intent.getSerializableExtra("ITEMS");
+        lahetettava = (ArrayList<String>) intent.getSerializableExtra("Nimikkeet");
+        System.out.println(lahetettava);
 
         tallennus = new ArrayList<>();
     }
@@ -126,7 +124,7 @@ public class BluetoothinHallinta extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 for(int i = 0; i < lahetettava.size(); i++){
-                    String string = lahetettava.get(i) + ";";
+                    String string = lahetettava.get(i) + "\n";
                     sendReceive.write(string.getBytes());
                 }
 
@@ -297,8 +295,9 @@ public class BluetoothinHallinta extends AppCompatActivity {
 
     public void mainNakyma(View view) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("ITEMS", tallennus);
+        intent.putExtra("Nimikkeet", tallennus);
         startActivity(intent);
+        finish();
     }
 
 }

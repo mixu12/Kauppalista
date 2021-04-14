@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //tämä tuo arraylistan BluetoothinHallinta-luokasta
                 Intent intent = getIntent();
-                vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("ITEMS");
+                vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("Nimikkeet");
                 vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("PDF");
 
                 if (vastaanotettu != null){
@@ -201,6 +201,10 @@ public class MainActivity extends AppCompatActivity {
 
             //Nimikkeet lisäävä metodi. Jos tuote on jo listassa, niin sitä ei lisätä. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
             public void lisaa(String uusiTuote) {
+                if (uusiTuote.contains("\n")){
+                    lisaaUseitaKerralla(uusiTuote);
+                    uusiTuote = "";
+                }
                 arrayList.clear(); //Lista pitää tyhjentää nimikkeistä, jotta historia ei jää talteen ja ei estä tallentamasta uusia tuotteita.
                 for(int i = 0 ; i < tietokanta.ryhmanNimikkeet(nimikeryhma).size(); i++){
                     arrayList.add(tietokanta.ryhmanNimikkeet(nimikeryhma).get(i).getNimi());
@@ -218,15 +222,15 @@ public class MainActivity extends AppCompatActivity {
                         // Hakee koko tietokannan listaan ja laittaa sen näkyville.
                         paivitaLista();
                         arrayAdapter.notifyDataSetChanged();
-                } else {
-                    if (vastaanotettu != null) {
-                        //Bluetoothilla siirretyssä listassa on puolipiste sanoja erottavana merkkinä
-                        String[] osat = vastaanotettu.get(0).split(";");
-                        for (int i = 0; i < osat.length; i++) {
-                            arrayList.add(osat[i]);
-                        }
-                    }
+                }
+            }
 
+            public void lisaaUseitaKerralla(String uusiaTuotteita){
+                String[] pilkottu = uusiaTuotteita.split("\n");
+
+                for (int i = 0 ; i < pilkottu.length; i++){
+                    String sana = pilkottu[i];
+                    lisaa(sana);
                 }
             }
 
@@ -300,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "muokattu", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(MainActivity.this, MainActivity.class);
                             startActivity(intent);
+                            finish();
                             return false;
                         }
                         return true;
@@ -349,8 +354,12 @@ public class MainActivity extends AppCompatActivity {
 
     //Siirtyminen bluetooth-ikkunaan.
     public void bluetoothNakyma() {
+        arrayList.clear();
+        for (int i = 0 ; i < tietokanta.ryhmanNimikkeet(nimikeryhma).size(); i++) {
+            arrayList.add(tietokanta.ryhmanNimikkeet(nimikeryhma).get(i).getNimi());
+        }
         Intent intent = new Intent(this, BluetoothinHallinta.class);
-        intent.putExtra("ITEMS", arrayList);
+        intent.putExtra("Nimikkeet", arrayList);
         startActivity(intent);
     }
 
