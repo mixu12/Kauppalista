@@ -35,7 +35,7 @@
         app:layout_constraintStart_toEndOf="@+id/lataa"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.kauppalista.EditTextV2
+    <com.example.kauppalista.EditTextMuokattu
         android:id="@+id/tekstikentta"
         android:layout_width="296dp"
         android:layout_height="46dp"

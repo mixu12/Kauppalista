@@ -74,6 +74,7 @@ public class BluetoothinHallinta extends AppCompatActivity {
         lahetettava = (ArrayList<String>) intent.getSerializableExtra("Nimikkeet");
 
         tallennus = new ArrayList<>();
+
     }
 
     private void implementListeners() {
@@ -106,7 +107,7 @@ public class BluetoothinHallinta extends AppCompatActivity {
                 ClientClass clientClass = new ClientClass(btArray[i]);
                 clientClass.start();
 
-                status.setText("Connecting");
+                status.setText("Yhdistää");
             }
         });
 
@@ -138,16 +139,16 @@ public class BluetoothinHallinta extends AppCompatActivity {
 
             switch (msg.what) {
                 case STATE_LISTENING:
-                    status.setText("Listening");
+                    status.setText("Etsitään");
                     break;
                 case STATE_CONNECTING:
-                    status.setText("Connecting");
+                    status.setText("Yhdistää");
                     break;
                 case STATE_CONNECTED:
-                    status.setText("Connected");
+                    status.setText("Yhdistetty");
                     break;
                 case STATE_CONNECTION_FAILED:
-                    status.setText("Connection Failed");
+                    status.setText("Yhteys epäonnistui");
                     break;
                 case STATE_MESSAGE_RECEIVED:
                     byte[] readBuff = (byte[]) msg.obj;
