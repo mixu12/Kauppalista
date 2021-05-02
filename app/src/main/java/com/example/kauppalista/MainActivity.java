@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        // Tarkistaa onko intentin kautta tullut tietoja eli bluetooth tai pdf. Tyhjentää vastaanotettu-listan heti kauppalistaan siirron jälkeen.
         haeIntentillaLahetetyt();
 
         if (vastaanotettu != null) {
@@ -160,9 +161,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void haeIntentillaLahetetyt() {
         //tämä tuo arraylistan BluetoothinHallinta-luokasta ja PDF-valikosta
-        Intent intent = getIntent();
-        vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("Nimikkeet");
-        vastaanotettu = (ArrayList<String>) intent.getSerializableExtra("PDF");
+        Intent intentBluetooth = getIntent();
+        vastaanotettu = (ArrayList<String>) intentBluetooth.getSerializableExtra("Nimikkeet");
+
+        Intent intentPDF = getIntent();
+        vastaanotettu = (ArrayList<String>) intentPDF.getSerializableExtra("PDF");
     }
 
     //Tämä käy läpi vastaanotettu-listan ja lähettää ne metodille lisaa.
