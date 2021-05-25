@@ -359,6 +359,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.Pdfkasittely:
                 pdfKasittely();
                 return true;
+            case R.id.Ocr:
+                ocr();
+                return true;
         }
         ;
 
@@ -386,6 +389,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void pdfKasittely() {
         Intent intent = new Intent(this, Pdfkasittely.class);
+        startActivity(intent);
+    }
+
+    public void ocr() {
+        Intent intent = new Intent(this, Ocr.class);
         startActivity(intent);
     }
 

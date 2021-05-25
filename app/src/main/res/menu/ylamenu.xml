@@ -17,4 +17,9 @@
         android:id="@+id/Pdfkasittely"
         android:title="PDF:n luku" />
 
+    <item
+        android:id="@+id/Ocr"
+        android:title="Tekstintunnistus"
+        android:visible="false" />
+
 </menu>

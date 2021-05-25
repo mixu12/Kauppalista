@@ -1,13 +1,14 @@
 package com.example.kauppalista;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,10 +19,13 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Pdfkasittely extends AppCompatActivity {
 
@@ -31,8 +35,12 @@ public class Pdfkasittely extends AppCompatActivity {
 
     public ListView listaus;
     public static String FILE_NAME = null;
+    public static String tiedostonNimi = null;
 
     ArrayList<String> tekstirivit;
+
+    private static final int OPEN_DIRECTORY_REQUEST_CODE = 1;
+    private static final int PICKFILE_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +51,23 @@ public class Pdfkasittely extends AppCompatActivity {
 
         PDFBoxResourceLoader.init(getApplicationContext());
 
-        setListaus();
+        //setListaus();
 
         Button pdfOK = (Button) findViewById(R.id.pdfOK);
+
+        Button tiedostot = (Button) findViewById(R.id.tiedostot);
 
         pdfOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 stripText(view);
+            }
+        });
+
+        tiedostot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tiedostonValinta();
             }
         });
     }
@@ -59,7 +76,9 @@ public class Pdfkasittely extends AppCompatActivity {
      * Strips the text from a PDF and displays the text on screen
      */
     public void stripText(View v) {
-        File input = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), FILE_NAME);
+        //File input = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), tiedostonNimi);
+        File input = new File("/data/data/com.example.kauppalista/files", tiedostonNimi);
+        System.out.println(input);
         String parsedText = null;
         PDDocument document = null;
         try {
@@ -90,6 +109,7 @@ public class Pdfkasittely extends AppCompatActivity {
         mainNakyma(v);
     }
 
+    /*
     public void setListaus(){
 
         File tiedostot = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()); //Hakee tiedostokansion oletustiedoston nimellä.
@@ -124,6 +144,8 @@ public class Pdfkasittely extends AppCompatActivity {
 
     }
 
+     */
+
     public ArrayList<String> setlistaan(String teksti){
         String[] pilkottu = teksti.split("\n");
         tekstirivit = new ArrayList<>();
@@ -138,6 +160,146 @@ public class Pdfkasittely extends AppCompatActivity {
         intent.putExtra("PDF", tekstirivit);
         startActivity(intent);
         finish();
+    }
+
+    public void tiedostonValinta(){
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        //intent.setType("application/pdf");
+        intent.setType("*/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICKFILE_REQUEST_CODE);
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICKFILE_REQUEST_CODE) {
+            Uri uri = data.getData();
+            tiedostonNimi = haeTiedostonNimi(uri);
+            Context context = getApplicationContext();
+            try {
+                uusiTiedosto(getApplicationContext(), uri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            TextView pdfNimi = (TextView) findViewById(R.id.pdfNimi);
+            pdfNimi.setText(tiedostonNimi);
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public String haeTiedostonNimi(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+/*
+    public void uusiTiedosto(Uri uri){
+        BufferedReader br;
+        FileOutputStream os;
+        try {
+            br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(uri)));
+            //the name NewFileName on internal app storage?
+            os = openFileOutput(tiedostonNimi, Context.MODE_PRIVATE);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                os.write(line.getBytes());
+                Log.w("jotain",line);
+            }
+            br.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+ */
+
+    public void uusiTiedosto(Context context, Uri uri) throws IOException {
+        String destinationDir = "/data/data/com.example.kauppalista/files";
+        String destFileName = tiedostonNimi;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        InputStream input = null;
+        boolean hasError = false;
+
+        try {
+            input = context.getContentResolver().openInputStream(uri);
+
+            boolean directorySetupResult;
+            File destDir = new File(destinationDir);
+        System.out.println(destDir);
+            if (!destDir.exists()) {
+                directorySetupResult = destDir.mkdirs();
+            } else if (!destDir.isDirectory()) {
+                directorySetupResult = replaceFileWithDir(destinationDir);
+            } else {
+                directorySetupResult = true;
+            }
+
+            if (!directorySetupResult) {
+                hasError = true;
+            } else {
+                String destination = destinationDir + File.separator + destFileName;
+                int originalsize = input.available();
+
+                bis = new BufferedInputStream(input);
+                bos = new BufferedOutputStream(new FileOutputStream(destination));
+                byte[] buf = new byte[originalsize];
+                bis.read(buf);
+                do {
+                    bos.write(buf);
+                } while (bis.read(buf) != -1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            hasError = true;
+        } finally {
+            try {
+                if (bos != null) {
+                    bos.flush();
+                    bos.close();
+                }
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    private static boolean replaceFileWithDir(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            if (file.mkdirs()) {
+                return true;
+            }
+        } else if (file.delete()) {
+            File folder = new File(path);
+            if (folder.mkdirs()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
