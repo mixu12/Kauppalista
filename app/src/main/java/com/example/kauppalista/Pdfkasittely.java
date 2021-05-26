@@ -61,6 +61,7 @@ public class Pdfkasittely extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 stripText(view);
+                poistaLuodutTiedostot();
             }
         });
 
@@ -78,7 +79,6 @@ public class Pdfkasittely extends AppCompatActivity {
     public void stripText(View v) {
         //File input = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), tiedostonNimi);
         File input = new File("/data/data/com.example.kauppalista/files", tiedostonNimi);
-        System.out.println(input);
         String parsedText = null;
         PDDocument document = null;
         try {
@@ -176,20 +176,24 @@ public class Pdfkasittely extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICKFILE_REQUEST_CODE) {
-            Uri uri = data.getData();
-            tiedostonNimi = haeTiedostonNimi(uri);
-            Context context = getApplicationContext();
-            try {
-                uusiTiedosto(getApplicationContext(), uri);
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            if (requestCode == PICKFILE_REQUEST_CODE) {
+                Uri uri = data.getData();
+                tiedostonNimi = haeTiedostonNimi(uri);
+                Context context = getApplicationContext();
+                try {
+                    uusiTiedosto(getApplicationContext(), uri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                TextView pdfNimi = (TextView) findViewById(R.id.pdfNimi);
+                pdfNimi.setText(tiedostonNimi);
+                return;
             }
-            TextView pdfNimi = (TextView) findViewById(R.id.pdfNimi);
-            pdfNimi.setText(tiedostonNimi);
-            return;
+            super.onActivityResult(requestCode, resultCode, data);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public String haeTiedostonNimi(Uri uri) {
@@ -213,54 +217,33 @@ public class Pdfkasittely extends AppCompatActivity {
         }
         return result;
     }
-/*
-    public void uusiTiedosto(Uri uri){
-        BufferedReader br;
-        FileOutputStream os;
-        try {
-            br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(uri)));
-            //the name NewFileName on internal app storage?
-            os = openFileOutput(tiedostonNimi, Context.MODE_PRIVATE);
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                os.write(line.getBytes());
-                Log.w("jotain",line);
-            }
-            br.close();
-            os.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
- */
 
     public void uusiTiedosto(Context context, Uri uri) throws IOException {
-        String destinationDir = "/data/data/com.example.kauppalista/files";
-        String destFileName = tiedostonNimi;
+        String kohdekansio = "/data/data/com.example.kauppalista/files";
+        //System.out.println(getFilesDir()); Tämä vie kansioon /data/user/0/com.example.kauppalista/files
+        String uudenTiedostonNimi = tiedostonNimi;
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         InputStream input = null;
-        boolean hasError = false;
+        boolean virhe = false;
 
         try {
             input = context.getContentResolver().openInputStream(uri);
 
             boolean directorySetupResult;
-            File destDir = new File(destinationDir);
-        System.out.println(destDir);
+            File destDir = new File(kohdekansio);
             if (!destDir.exists()) {
                 directorySetupResult = destDir.mkdirs();
             } else if (!destDir.isDirectory()) {
-                directorySetupResult = replaceFileWithDir(destinationDir);
+                directorySetupResult = replaceFileWithDir(kohdekansio);
             } else {
                 directorySetupResult = true;
             }
 
             if (!directorySetupResult) {
-                hasError = true;
+                virhe = true;
             } else {
-                String destination = destinationDir + File.separator + destFileName;
+                String destination = kohdekansio + File.separator + uudenTiedostonNimi;
                 int originalsize = input.available();
 
                 bis = new BufferedInputStream(input);
@@ -273,7 +256,7 @@ public class Pdfkasittely extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            hasError = true;
+            virhe = true;
         } finally {
             try {
                 if (bos != null) {
@@ -286,7 +269,7 @@ public class Pdfkasittely extends AppCompatActivity {
         }
     }
 
-    private static boolean replaceFileWithDir(String path) {
+    private boolean replaceFileWithDir(String path) {
         File file = new File(path);
         if (!file.exists()) {
             if (file.mkdirs()) {
@@ -299,6 +282,15 @@ public class Pdfkasittely extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    private void poistaLuodutTiedostot(){
+        File poistettavat = new File("/data/data/com.example.kauppalista/files");
+        String[] tiedostot = poistettavat.list();
+        for(int i = 0; i < tiedostot.length; i++){
+            File tiedosto = new File(poistettavat, tiedostot[i]);
+            tiedosto.delete();
+        }
     }
 
 }
