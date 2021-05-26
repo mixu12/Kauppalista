@@ -2,7 +2,6 @@ package com.example.kauppalista;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,17 +27,10 @@ import java.util.ArrayList;
 
 public class Pdfkasittely extends AppCompatActivity {
 
-    File root;
-    AssetManager assetManager;
-    TextView tv;
-
-    public ListView listaus;
-    public static String FILE_NAME = null;
     public static String tiedostonNimi = null;
 
     ArrayList<String> tekstirivit;
 
-    private static final int OPEN_DIRECTORY_REQUEST_CODE = 1;
     private static final int PICKFILE_REQUEST_CODE = 100;
 
     @Override
@@ -47,11 +38,7 @@ public class Pdfkasittely extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdfkasittely);
 
-
-
         PDFBoxResourceLoader.init(getApplicationContext());
-
-        //setListaus();
 
         Button pdfOK = (Button) findViewById(R.id.pdfOK);
 
@@ -77,8 +64,7 @@ public class Pdfkasittely extends AppCompatActivity {
      * Strips the text from a PDF and displays the text on screen
      */
     public void stripText(View v) {
-        //File input = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), tiedostonNimi);
-        File input = new File("/data/data/com.example.kauppalista/files", tiedostonNimi);
+        File input = new File(getFilesDir().getPath(), tiedostonNimi);
         String parsedText = null;
         PDDocument document = null;
         try {
@@ -108,43 +94,6 @@ public class Pdfkasittely extends AppCompatActivity {
         setlistaan(parsedText);
         mainNakyma(v);
     }
-
-    /*
-    public void setListaus(){
-
-        File tiedostot = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()); //Hakee tiedostokansion oletustiedoston nimellä.
-        File[] tiedostolista = tiedostot.listFiles(); //Muodostaa tiedostoista taulukon.
-
-        final ArrayList<String> tiedostojenNimetListassa = new ArrayList<>();
-
-        for (int i = 0; i < tiedostolista.length; i++) { //Tiedostojen läpikäynti
-            if (tiedostolista[i].getName().contains(".pdf")) { //Suodattaa vain pdf-tiedostot näkyville
-                tiedostojenNimetListassa.add(tiedostolista[i].getName().toLowerCase());
-            }
-        }
-
-        Collections.sort(tiedostojenNimetListassa); //Järjestää listan aakkosjärjestykseen
-
-        //Tästä eteenpäin lisää tiedostot näkyviin ListViewiin
-        listaus = (ListView) findViewById(R.id.listaus);
-        listaus.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        final ArrayAdapter arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tiedostojenNimetListassa);
-
-        listaus.setAdapter(arrayAdapter);
-
-        //Tällä valitaan haluttu tiedosto ja siirtää tiedosotn nimen EditText-kenttään.
-        listaus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                FILE_NAME = tiedostojenNimetListassa.get(i);
-                TextView pdfNimi = (TextView) findViewById(R.id.pdfNimi);
-                pdfNimi.setText(FILE_NAME);
-            }
-        });
-
-    }
-
-     */
 
     public ArrayList<String> setlistaan(String teksti){
         String[] pilkottu = teksti.split("\n");
@@ -219,8 +168,7 @@ public class Pdfkasittely extends AppCompatActivity {
     }
 
     public void uusiTiedosto(Context context, Uri uri) throws IOException {
-        String kohdekansio = "/data/data/com.example.kauppalista/files";
-        //System.out.println(getFilesDir()); Tämä vie kansioon /data/user/0/com.example.kauppalista/files
+        String kohdekansio = getFilesDir().getPath(); //Tämä vie kansioon /data/user/0/com.example.kauppalista/files
         String uudenTiedostonNimi = tiedostonNimi;
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
@@ -285,11 +233,12 @@ public class Pdfkasittely extends AppCompatActivity {
     }
 
     private void poistaLuodutTiedostot(){
-        File poistettavat = new File("/data/data/com.example.kauppalista/files");
+        File poistettavat = new File(getFilesDir().getPath());
         String[] tiedostot = poistettavat.list();
         for(int i = 0; i < tiedostot.length; i++){
             File tiedosto = new File(poistettavat, tiedostot[i]);
             tiedosto.delete();
+            System.out.println("Tiedostot poistettu");
         }
     }
 

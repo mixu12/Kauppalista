@@ -68,8 +68,10 @@ public class Tietokanta extends SQLiteOpenHelper {
 
         long insert = db.insert(LISTA, null, cv);
         if (insert == -1){
+            db.close();
             return false;
         } else {
+            db.close();
             return true;
         }
 
