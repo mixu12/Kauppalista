@@ -142,6 +142,32 @@ public class Tietokanta extends SQLiteOpenHelper {
         return nimikkeet;
     }
 
+    public String getViimeisimmanNimikkeenNimikeryhma(){
+        // Datan haku kannasta
+
+        String viimeisimmanNimikkeenNimikeryhma = "";
+
+        String queryString = "SELECT " + COLUMN_RYHMA + " as viimeisin FROM " + LISTA + " WHERE " + COLUMN_ID + " = (SELECT MAX(" + COLUMN_ID + ") FROM " + LISTA + ")";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if (cursor.moveToFirst()) {
+            // hakee tiedon kannasta
+            do {
+                viimeisimmanNimikkeenNimikeryhma = cursor.getString(cursor.getColumnIndex("viimeisin"));
+
+            } while (cursor.moveToNext());
+
+        } else {
+            // Jos tulee virhe
+        }
+        // Sulkee tietokannan
+        cursor.close();
+        db.close();
+        return viimeisimmanNimikkeenNimikeryhma;
+    }
+
     public boolean poistaYksi(Nimike nimike){
 
         SQLiteDatabase db = this.getWritableDatabase();

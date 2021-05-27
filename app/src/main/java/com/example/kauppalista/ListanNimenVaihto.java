@@ -10,9 +10,7 @@ import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-
-public class tallennusikkuna extends Activity {
+public class ListanNimenVaihto extends Activity {
 
     Tietokanta tietokanta;
 
@@ -31,7 +29,7 @@ public class tallennusikkuna extends Activity {
 
         getWindow().setLayout((int) (width*.5),(int)(height*.4));
 
-        tietokanta = new Tietokanta(tallennusikkuna.this);
+        tietokanta = new Tietokanta(ListanNimenVaihto.this);
         
         //tämä vastaanottaa talletettavan listan
         Intent intent = getIntent();
@@ -47,6 +45,11 @@ public class tallennusikkuna extends Activity {
                     mainNakyma(view);
                 } else {
                     tietokanta.paivitaRyhma(tiedostonNimi.getText().toString(), nimikeryhma);
+
+                    //Päivittää näkymän etusivulle viimeisimmän listan kautta
+                    ViimeisinLista viimeisinLista = new ViimeisinLista(-1, tiedostonNimi.getText().toString());
+                    tietokanta.lisaaViimeisinLista(viimeisinLista);
+
                     mainNakyma(view);
                 }
             }

@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        nimikeryhma = "tyhjä"; // Tämä tarvitaan, jotta listan nimen vaihdon jälkeen hyppää oikeaan listaan.
 
 //listViewiin tulee näkyviin tallennetut ostokset
         listView = (ListView) findViewById(R.id.listview);
@@ -55,26 +54,14 @@ public class MainActivity extends AppCompatActivity {
         if (nimikeryhma.equals("tyhjä") && tietokanta.getViimeisinRyhma() != null) {
             nimikeryhma = tietokanta.getViimeisinRyhma();
             paivitaLista();
-
         }
 
         // Tarkistaa onko intentin kautta tullut tietoja eli bluetooth tai pdf. Tyhjentää vastaanotettu-listan heti kauppalistaan siirron jälkeen.
         haeIntentillaLahetetyt();
 
-        if (vastaanotettu != null) {
-            if (vastaanotettu.size() > 0) {
-                vastaanotetutDatat();
-                vastaanotettu.clear();
-            }
-        }
-
-    //lisää-napin määrittely. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
+    //lisää-napin määrittely
         Button leikepoyta = findViewById(R.id.leikepoyta);
         final EditText sana = findViewById(R.id.tekstikentta);
-
-        if (!sana.getText().toString().equals("")) {
-            lisaysNapinPainallus(sana);
-        }
 
         // Sanan lisäys enteria painamalla. Palauttaa falsen, koska silloin ei näppäimistö mene piiloon.
         sana.setOnKeyListener(new View.OnKeyListener() {
@@ -88,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Sanan lisäys lisää-nappia painamalla.
+        // leikepydälle kopiointi
         leikepoyta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             // Lisäys SQLite kantaan.
             Tietokanta tietokanta = new Tietokanta(MainActivity.this);
 
-            boolean viimeisimmanLisays = tietokanta.lisaaViimeisinLista(viimeisinLista);
+            tietokanta.lisaaViimeisinLista(viimeisinLista);
 
             // Hakee koko tietokannan listaan ja laittaa sen näkyville.
             paivitaLista();
@@ -166,6 +153,14 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intentPDF = getIntent();
         vastaanotettu = (ArrayList<String>) intentPDF.getSerializableExtra("PDF");
+
+        //Tarkistaa onko vastaanotetuissa mitään ja jos on, lisää kauppalistalle ja tyhjentää vastaanotettu-listan
+        if (vastaanotettu != null) {
+            if (vastaanotettu.size() > 0) {
+                vastaanotetutDatat();
+                vastaanotettu.clear();
+            }
+        }
     }
 
     //Tämä käy läpi vastaanotettu-listan ja lähettää ne metodille lisaa.
@@ -193,15 +188,7 @@ public class MainActivity extends AppCompatActivity {
             arrayAdapter = new CustomAdapter<Nimike>(MainActivity.this, R.layout.listview_checkboxilla, tietokanta.kaikkiNimikkeet());
             listView.setAdapter(arrayAdapter);
         }
-    }
-
-    //Tällä koodilla voi sulkea automaattisesti näppäimistän. Ei tällä hetkellä käytössä
-    private void suljeNappaimisto() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+        getSupportActionBar().setTitle(nimikeryhma);
     }
 
     // Valmistelee sanan lisäyksen ennen lopullista lisäämistä tauluun hakemalla lisätyn sanan.
@@ -218,8 +205,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Nimikkeet lisäävä metodi. Jos tuote on jo listassa, niin sitä ei lisätä. Jos EditText-kentässä ei ole mitään ja painaa "Lisää", niin yrittää hakea bluetoothilla siirretyn listan.
+    //Nimikkeet lisäävä metodi. Jos tuote on jo listassa, niin sitä ei lisätä.
     public void lisaa(String uusiTuote) {
+        //Jos lisättävä tieto sisältää useita rivejä, se pilkotaan ensin.
         if (uusiTuote.contains("\n")) {
             lisaaUseitaKerralla(uusiTuote);
             uusiTuote = "";
@@ -266,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
     public void tyhjennys() {
         if (nimikeryhma != null) {
             tietokanta.poistaKaikki(nimikeryhma);
+            nimikeryhma = tietokanta.getViimeisimmanNimikkeenNimikeryhma();
         } else {
             tietokanta.poistaKaikki();
         }
@@ -382,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void paivitaNimiValikko() {
-        Intent intent = new Intent(MainActivity.this, tallennusikkuna.class);
+        Intent intent = new Intent(MainActivity.this, ListanNimenVaihto.class);
         intent.putExtra("nimikeryhmä", nimikeryhma);
         startActivity(intent);
     }

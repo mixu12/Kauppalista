@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".tallennusikkuna"
+            android:name=".ListanNimenVaihto"
             android:theme="@style/AppTheme.CustomTheme" />
         <activity
             android:name=".latausikkuna"
