@@ -60,9 +60,7 @@ public class Pdfkasittely extends AppCompatActivity {
         });
     }
 
-    /**
-     * Strips the text from a PDF and displays the text on screen
-     */
+     //Tekstin erottelu pdf-tiedostosta
     public void stripText(View v) {
         File input = new File(getFilesDir().getPath(), tiedostonNimi);
         String parsedText = null;
@@ -70,7 +68,7 @@ public class Pdfkasittely extends AppCompatActivity {
         try {
             document = PDDocument.load(input);
         } catch(IOException e) {
-            Log.e("PdfBox-Android-Sample", "Exception thrown while loading document to strip", e);
+            Log.e("PdfBox-Android", "Virhe ladattaessa dokumenttia", e);
         }
 
         try {
@@ -81,20 +79,21 @@ public class Pdfkasittely extends AppCompatActivity {
         }
         catch (IOException e)
         {
-            Log.e("PdfBox-Android-Sample", "Exception thrown while stripping text", e);
+            Log.e("PdfBox-Android", "Virhe tekstirivien käsittelyssä", e);
         } finally {
             try {
                 if (document != null) document.close();
             }
             catch (IOException e)
             {
-                Log.e("PdfBox-Android-Sample", "Exception thrown while closing document", e);
+                Log.e("PdfBox-Android", "Virhe dokumentin sulkemisessa", e);
             }
         }
         setlistaan(parsedText);
         mainNakyma(v);
     }
 
+    //Eroteltu teksti siirretään listaan
     public ArrayList<String> setlistaan(String teksti){
         String[] pilkottu = teksti.split("\n");
         tekstirivit = new ArrayList<>();
@@ -112,7 +111,6 @@ public class Pdfkasittely extends AppCompatActivity {
     }
 
     public void tiedostonValinta(){
-
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
@@ -167,6 +165,7 @@ public class Pdfkasittely extends AppCompatActivity {
         return result;
     }
 
+    // Tähän metodiin saatu ohjeita täältä https://stackoverflow.com/questions/13133579/android-save-a-file-from-an-existing-uri
     public void uusiTiedosto(Context context, Uri uri) throws IOException {
         String kohdekansio = getFilesDir().getPath(); //Tämä vie kansioon /data/user/0/com.example.kauppalista/files
         String uudenTiedostonNimi = tiedostonNimi;
@@ -182,8 +181,6 @@ public class Pdfkasittely extends AppCompatActivity {
             File destDir = new File(kohdekansio);
             if (!destDir.exists()) {
                 directorySetupResult = destDir.mkdirs();
-            } else if (!destDir.isDirectory()) {
-                directorySetupResult = replaceFileWithDir(kohdekansio);
             } else {
                 directorySetupResult = true;
             }
@@ -215,21 +212,6 @@ public class Pdfkasittely extends AppCompatActivity {
 
             }
         }
-    }
-
-    private boolean replaceFileWithDir(String path) {
-        File file = new File(path);
-        if (!file.exists()) {
-            if (file.mkdirs()) {
-                return true;
-            }
-        } else if (file.delete()) {
-            File folder = new File(path);
-            if (folder.mkdirs()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void poistaLuodutTiedostot(){

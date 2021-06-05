@@ -39,13 +39,6 @@ public class Nimike implements Serializable {
     }
 
     public String toString(){
-/*
-        if (this.keratty == false) {
-            return this.nimi + " " + this.ryhma;
-        } else {
-            return "";
-        }
- */
         return this.nimi + " " + this.ryhma;
     }
 

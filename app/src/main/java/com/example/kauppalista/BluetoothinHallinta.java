@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+//Tämä luokka kopioitu hyvin pitkälti täältä https://www.youtube.com/channel/UCWOpKx--cc-48bze5T4vYUg
 public class BluetoothinHallinta extends AppCompatActivity {
 
     public ArrayList<String> lahetettava;

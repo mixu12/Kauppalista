@@ -27,7 +27,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public ListView listView;
-    //Kaiki nimikkeet tallentuvat myös listaan arrayList, koska olioita sisältävän listan siirto bluetooth-ikkunaan ei vielä toimi.
+    //Kaikki nimikkeet tallentuvat myös listaan arrayList, koska olioita sisältävän listan siirto bluetooth-ikkunaan ei vielä toimi.
     final ArrayList<String> arrayList = new ArrayList<>();
     public ArrayList<String> vastaanotettu = new ArrayList<>();
 
@@ -130,12 +130,10 @@ public class MainActivity extends AppCompatActivity {
         String nimikeryhmaLatausikkunasta = (String) intent.getSerializableExtra("NIMI");
         if (nimikeryhmaLatausikkunasta != null) {
             nimikeryhma = nimikeryhmaLatausikkunasta;
-            ViimeisinLista viimeisinLista = new ViimeisinLista(-1, nimikeryhma);
 
             // Lisäys SQLite kantaan.
             Tietokanta tietokanta = new Tietokanta(MainActivity.this);
-
-            tietokanta.lisaaViimeisinLista(viimeisinLista);
+            lisaysViimeisimpaanListaan();
 
             // Hakee koko tietokannan listaan ja laittaa sen näkyville.
             paivitaLista();
@@ -255,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
         if (nimikeryhma != null) {
             tietokanta.poistaKaikki(nimikeryhma);
             nimikeryhma = tietokanta.getViimeisimmanNimikkeenNimikeryhma();
+            lisaysViimeisimpaanListaan();
         } else {
             tietokanta.poistaKaikki();
         }
@@ -275,6 +274,12 @@ public class MainActivity extends AppCompatActivity {
         ClipData clip = ClipData.newPlainText("tuotteet", tuotteet);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(MainActivity.this, "Tallennettu leikepöydälle", Toast.LENGTH_SHORT).show();
+    }
+
+    public void lisaysViimeisimpaanListaan(){
+        ViimeisinLista viimeisinLista = new ViimeisinLista(-1, nimikeryhma);
+        tietokanta.lisaaViimeisinLista(viimeisinLista);
+
     }
 
     // Tästä alkaa listview-menun ja ylämenun rakentaminen
@@ -342,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.Bluetooth_valikko:
                 bluetoothNakyma();
                 return true;
-            case R.id.tyhjennaLista:
+            case R.id.poistaLista:
                 tyhjennys();
                 return true;
             case R.id.Pdfkasittely:
