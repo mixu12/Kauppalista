@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     lisaysNapinPainallus(sana);
                     return false;
                 }
-                return true;
+                return false; //jos tässä on true, niin ei voi jostain syystä poistaa backspacella välejä edittext-kentästä
             }
         });
 
