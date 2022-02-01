@@ -71,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
                     lisaysNapinPainallus(sana);
                     return false;
                 }
-                return false; //jos tässä on true, niin ei voi jostain syystä poistaa backspacella välejä edittext-kentästä
+                return true; //jos tässä on true, niin ei voi jostain syystä poistaa backspacella välejä edittext-kentästä samsungissa.
+                //toisaalta, jos on false, niin edittext-kenttä ei aktivoidu heti tuotteen lisäyksen jälkeen.
             }
         });
 
