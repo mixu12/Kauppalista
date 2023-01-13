@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     public ListView listView;
     //Kaikki nimikkeet tallentuvat myös listaan arrayList, koska olioita sisältävän listan siirto bluetooth-ikkunaan ei vielä toimi.
     final ArrayList<String> arrayList = new ArrayList<>();
-    public ArrayList<String> vastaanotettu = new ArrayList<>();
+    public ArrayList<String> vastaanotettuBluetooth = new ArrayList<>();
+    public ArrayList<String> vastaanotettuPDF = new ArrayList<>();
 
     // Luo tyhjän ArrayAdapterin ja tietokannan
     CustomAdapter arrayAdapter;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     lisaysNapinPainallus(sana);
                     return false;
                 }
-                return true; //jos tässä on true, niin ei voi jostain syystä poistaa backspacella välejä edittext-kentästä samsungissa.
+                return false; //jos tässä on true, niin ei voi jostain syystä poistaa backspacella välejä edittext-kentästä samsungissa.
                 //toisaalta, jos on false, niin edittext-kenttä ei aktivoidu heti tuotteen lisäyksen jälkeen.
             }
         });
@@ -148,24 +149,31 @@ public class MainActivity extends AppCompatActivity {
     private void haeIntentillaLahetetyt() {
         //tämä tuo arraylistan BluetoothinHallinta-luokasta ja PDF-valikosta
         Intent intentBluetooth = getIntent();
-        vastaanotettu = (ArrayList<String>) intentBluetooth.getSerializableExtra("Nimikkeet");
+        vastaanotettuBluetooth = (ArrayList<String>) intentBluetooth.getSerializableExtra("Nimikkeet");
+
+        vastaanotettujenKasittely(vastaanotettuBluetooth);
 
         Intent intentPDF = getIntent();
-        vastaanotettu = (ArrayList<String>) intentPDF.getSerializableExtra("PDF");
+        vastaanotettuPDF = (ArrayList<String>) intentPDF.getSerializableExtra("PDF");
 
+        vastaanotettujenKasittely(vastaanotettuPDF);
+    }
+
+    public void vastaanotettujenKasittely(ArrayList<String> vastaanotettuLista){
         //Tarkistaa onko vastaanotetuissa mitään ja jos on, lisää kauppalistalle ja tyhjentää vastaanotettu-listan
-        if (vastaanotettu != null) {
-            if (vastaanotettu.size() > 0) {
-                vastaanotetutDatat();
-                vastaanotettu.clear();
+        if (vastaanotettuLista != null) {
+            if (vastaanotettuLista.size() > 0) {
+                vastaanotetutDatat(vastaanotettuLista);
+                vastaanotettuLista.clear();
             }
         }
     }
 
+
     //Tämä käy läpi vastaanotettu-listan ja lähettää ne metodille lisaa.
-    public void vastaanotetutDatat() {
-        for (int i = 0; i < vastaanotettu.size(); i++) {
-            String sana = vastaanotettu.get(i);
+    public void vastaanotetutDatat(ArrayList<String> vastaanotettuLista) {
+        for (int i = 0; i < vastaanotettuLista.size(); i++) {
+            String sana = vastaanotettuLista.get(i);
             lisaa(sana);
         }
     }
